@@ -7,10 +7,13 @@ use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\UpdateIssueRequest;
 use App\Http\Resources\IssueResource;
 use App\Models\Issue;
+use App\Services\IssueService;
 use Illuminate\Http\Request;
 
 class IssueController extends Controller
 {
+
+    public function __construct(private IssueService $issueService,) {}
     /**
      * Display a listing of the resource.
      */
@@ -19,8 +22,8 @@ class IssueController extends Controller
         $query = Issue::query();
 
         $query->when($request->status, fn($q, $v) => $q->where('status', $v));
-        $query->when($request->category, fn($q,$v) => $q->where('category', $v));
-        $query->when($request->priority, fn($q,$v) => $q->where('priority', $v));
+        $query->when($request->category, fn($q, $v) => $q->where('category', $v));
+        $query->when($request->priority, fn($q, $v) => $q->where('priority', $v));
 
         return IssueResource::collection($query->latest()->paginate(20));
     }
@@ -30,7 +33,7 @@ class IssueController extends Controller
      */
     public function store(StoreIssueRequest $request)
     {
-        $issue = Issue::create($request->validated());
+       $issue = $this->issueService->create($request->validated());
 
         return new IssueResource($issue);
     }
@@ -48,7 +51,7 @@ class IssueController extends Controller
      */
     public function update(UpdateIssueRequest $request, Issue $issue)
     {
-        $issue->update($request->validated());
+        $issue = $this->issueService->update($issue, $request->validated());
 
         return new IssueResource($issue);
     }

@@ -12,6 +12,20 @@ class Issue extends Model
     /** @use HasFactory<\Database\Factories\IssueFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'description',
+        'priority',
+        'category',
+        'status',
+        'summary',
+        'suggested_action',
+        'summary_source',
+        'due_at',
+        'escalated',
+        'escalated_at',
+    ];
+
     protected $casts = [
         'priority' => Priority::class,
         'status' => Status::class,
